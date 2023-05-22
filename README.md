@@ -36,6 +36,8 @@ Type "pico" in the search box and select "Add":
 
 Add this to your arduino boards.txt
 
+> For Arduino IDE 1.x
+
 Location example  [yourinstallationdirectory]\arduino-1.8.13\hardware\arduino\avr\boards.txt
 
 > For Arduino IDE 2.x
