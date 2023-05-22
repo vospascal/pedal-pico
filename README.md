@@ -2,11 +2,11 @@
 Please be patient
 
 ## PedalBox
-- client gui pi pico side to found here https://github.com/vospascal/pedal-gui
-- client gui in on the web to found here https://vospascal.github.io/pedal-gui-web works with latest chrome version also opensource and zero install https://github.com/vospascal/svelte-webserial unLike the java version.
+- Client GUI pi pico side to found here https://github.com/vospascal/pedal-gui
+- Client GUI in on the web to found here https://vospascal.github.io/pedal-gui-web works with latest chrome version also opensource and zero install https://github.com/vospascal/svelte-webserial unlike the java version.
 
 ## Help
-If you want to develop the software furter please create a pull request or create an issue
+If you want to develop the software further please create a pull request or create an issue
 
 ## If you like it
 Please leave a star
@@ -14,6 +14,9 @@ Please leave a star
 ## If you really like it
 If you like it you can donate further developent
 https://www.paypal.com/donate?business=TBPE6XCB2XBMW&item_name=pedalbox&currency_code=EUR
+
+## Uploading the firmware
+You can either upload the .uf2 file to pico or compile it yourself
 
 ## Compiling
 Open up the Arduino IDE and go to File->Preferences.
