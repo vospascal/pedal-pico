@@ -20,7 +20,7 @@ You can either upload the .uf2 file to pico or compile it yourself
 
 To upload the .uf2 file, simply hold BOOTSEL button while plugging the USB in. This will make RPI-RP2 drive appear. Then drag the .uf2 file to the drive, ad Pico is ready to be used as a pedal device.
 
-Note: If there was another program in the pico, make sure to upload **flash_nuke.uf2** file. This will erase Pico's flash **entirely**. 
+Note: If there was another program in the pico, make sure to upload `flash_nuke.uf2` file. This will erase Pico's flash **entirely**. 
 ## Compiling
 Open up the Arduino IDE and go to File->Preferences.
 
@@ -39,6 +39,7 @@ Add this to your arduino boards.txt
 Location example  [yourinstallationdirectory]\arduino-1.8.13\hardware\arduino\avr\boards.txt
 
 > For Arduino IDE 2.x
+
 Location example  [yourinstallationdirectory]\Arduino15\packages\rp2040\hardware\rp2040\ [yourlibraryversion] \boards.txt
 
 ```
