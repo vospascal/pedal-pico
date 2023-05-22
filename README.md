@@ -5,19 +5,36 @@ Please be patient
 - client gui pi pico side to found here https://github.com/vospascal/pedal-gui
 - client gui in on the web to found here https://vospascal.github.io/pedal-gui-web works with latest chrome version also opensource and zero install https://github.com/vospascal/svelte-webserial unLike the java version.
 
-## help
+## Help
 If you want to develop the software furter please create a pull request or create an issue
 
-## if you like it
-please leave a star
+## If you like it
+Please leave a star
 
-## if you realy like it
-if you like it you can donate further developent
+## If you really like it
+If you like it you can donate further developent
 https://www.paypal.com/donate?business=TBPE6XCB2XBMW&item_name=pedalbox&currency_code=EUR
 
-add this to your arduino boards.text
+## Compiling
+Open up the Arduino IDE and go to File->Preferences.
 
-location example  [yourinstallationdirectory]\arduino-1.8.13\hardware\arduino\avr\boards.txt
+In the dialog that pops up, enter the following URL in the "Additional Boards Manager URLs" field:
+
+https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+
+Hit OK to close the dialog.
+
+Go to Tools->Boards->Board Manager in the IDE
+
+Type "pico" in the search box and select "Add":
+
+Add this to your arduino boards.txt
+
+Location example  [yourinstallationdirectory]\arduino-1.8.13\hardware\arduino\avr\boards.txt
+
+For Arduino IDE 2.x
+ Location example  [yourinstallationdirectory]\Arduino15\packages\rp2040\hardware\rp2040\ [yourlibraryversion] \boards.txt
+
 ```
 ##############################################################
 
@@ -67,33 +84,33 @@ micro.build.extra_flags={build.usb_flags}
 ```
 
 
-# pedal-arduino
-it reads 0 - 5 volt scale. So as long as its within that range it'll work.
+# pedal-pico
+It reads 0 - 3.3 volt scale. So as long as its within that range it'll work.
 
 Measure the current, use "Arduino Micro Pro" as to read the analogue value from the sensor
 
-## conectors pedal side
+## Connectors Pedal Side
 1 V5/vcc
 5 GND
-6 analog/a1
+6 Analog/A1
 
 2 V5/vcc
 3 GND
-4 analog/a1
+4 Analog/A1
 
 
-## one loadcell example
+## One Loadcell Example
 
-| hx711  | arduino  | 
+| hx711  | pi pico  | 
 |---|---|
 | gnd  |  gnd |
 | sck  | pin 5  | 
 | vcc  | vcc  |
 | dt(data)  |  pin 7 |
 
-## multi loadcell example
+## Multi Loadcell Example
 
-| hx711  | arduino  | 
+| hx711  | pi pico  | 
 |---|---|
 | gnd  |  gnd |
 | vcc  | vcc  |
