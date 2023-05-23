@@ -20,7 +20,7 @@ You can either upload the .uf2 file to pico or compile it yourself
 
 To upload the .uf2 file, simply hold BOOTSEL button while plugging the USB in. This will make RPI-RP2 drive appear. Then drag the .uf2 file to the drive, ad Pico is ready to be used as a pedal device.
 
-Note: If there was another program in the pico, make sure to upload `flash_nuke.uf2` file. This will erase Pico's flash **entirely**. 
+Note: If there was another program in the pico, make sure to upload [flash_nuke.uf2](https://github.com/vospascal/pedal-pico/flash_nuke.uf2) file. This will erase Pico's flash **entirely**. 
 ## Compiling
 Open up the Arduino IDE and go to File->Preferences.
 
@@ -96,7 +96,7 @@ micro.build.extra_flags={build.usb_flags}
 # pedal-pico
 It reads 0 - 3.3 volt scale. So as long as its within that range it'll work.
 
-Measure the current, use "Arduino Micro Pro" as to read the analogue value from the sensor
+Measure the current, use "Raspberry Pi Pico" as to read the analogue value from the sensor
 
 ## Connectors Pedal Side
 1 V5/vcc
