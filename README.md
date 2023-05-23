@@ -18,7 +18,7 @@ https://www.paypal.com/donate?business=TBPE6XCB2XBMW&item_name=pedalbox&currency
 ## Uploading the firmware
 You can either upload the .uf2 file to pico or compile it yourself
 
-To upload the .uf2 file, simply hold BOOTSEL button while plugging the USB in. This will make RPI-RP2 drive appear. Then drag the .uf2 file to the drive, ad Pico is ready to be used as a pedal device.
+To upload the .uf2 file, simply hold BOOTSEL button while plugging the USB in. This will make a RPI-RP2 drive appear. Then drag the .uf2 file to the drive, and Pico is ready to be used as a pedal device.
 
 Note: If there was another program in the pico, make sure to upload [flash_nuke.uf2](https://github.com/vospascal/pedal-pico/raw/main/flash_nuke.uf2) file. This will erase Pico's flash **entirely**. 
 ## Compiling
