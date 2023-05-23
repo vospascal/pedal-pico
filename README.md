@@ -38,11 +38,11 @@ Add this to your arduino boards.txt
 
 > For Arduino IDE 1.x
 
-Location example  [yourinstallationdirectory]\arduino-1.8.13\hardware\arduino\avr\boards.txt
+Location example [yourinstallationdirectory]\arduino-1.8.13\hardware\arduino\avr\boards.txt
 
 > For Arduino IDE 2.x
 
-Location example  [yourinstallationdirectory]\Arduino15\packages\rp2040\hardware\rp2040\ [yourlibraryversion] \boards.txt
+Location example [yourinstallationdirectory]\Arduino15\packages\rp2040\hardware\rp2040\ [yourlibraryversion] \boards.txt
 
 ```
 ##############################################################
