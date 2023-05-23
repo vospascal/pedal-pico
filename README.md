@@ -1,5 +1,5 @@
 ## Under Development 
-Please be patient
+Please be patient, and usethe releases tab for the .uf2 file *AND* source code.
 
 ## PedalBox
 - Client GUI pi pico side to found here https://github.com/vospascal/pedal-gui
