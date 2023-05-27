@@ -31,7 +31,6 @@ String UtilLib::readStringFromEEPROM(int addrOffset)
   }
   data[newStrLen] = '\0'; // the character may appear in a weird way, you should read: 'only one backslash and 0'
   return String(data);
-  EEPROM.commit();
 }
 
 void UtilLib::writeStringToEEPROM(int addrOffset, const String &strToWrite)
@@ -42,7 +41,6 @@ void UtilLib::writeStringToEEPROM(int addrOffset, const String &strToWrite)
   for (int i = 0; i < len; i++)
   {
     EEPROM.write(addrOffset + 1 + i, strToWrite[i]);
-    EEPROM.commit();
   }
 }
 
