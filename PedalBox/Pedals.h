@@ -3,7 +3,6 @@
 
 #include <Joystick.h>
 #include "src/MultiMap/MultiMap.h"
-#include "src/SoftwareReset/SoftwareReset.h"
 #include <EEPROM.h>
 
 #include "UtilLibrary.h"
@@ -62,6 +61,7 @@ class Pedals {
         if (msg.indexOf("clearEEPROM") >= 0) {
           for (int i = 0; i < EEPROM.length(); i++) {
             EEPROM.write(i, 0);
+            EEPROM.commit();         
           }
           Serial.println("done");
         }
@@ -344,6 +344,7 @@ class Pedals {
     void resetDeviceSettings() {
       // write
       EEPROM.write(E_INIT, 'T');
+      EEPROM.commit();
 
       _clutch.resetOutputMapValues(E_CLUTCH);
       _brake.resetOutputMapValues(E_THROTTLE);
@@ -359,7 +360,7 @@ class Pedals {
       _brake.resetCalibrationValues(E_CALIBRATION_B);
       _throttle.resetCalibrationValues(E_CALIBRATION_T);
 
-      softwareReset::standard();
+      rp2040.reboot(); //reboot the pico
     }
 
     void resetDevice(String msg) {
