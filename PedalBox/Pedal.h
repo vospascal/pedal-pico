@@ -25,17 +25,17 @@ class Pedal
       _prefix = prefix;
     }
 
-    void Pedal::setBits (long rawBit, long hidBit) {
+    void setBits (long rawBit, long hidBit) {
       _raw_bit = rawBit;
       _hid_bit = hidBit;
     }
 
-    void Pedal::ConfigAnalog ( byte analogInput) {
+    void ConfigAnalog ( byte analogInput) {
       _analogInput = analogInput;
       _signal = 0;
     }
 
-    void Pedal::ConfigLoadCell (int DOUT, int CLK)
+    void ConfigLoadCell (int DOUT, int CLK)
     {
       _loadCell.begin(DOUT, CLK, _loadcell_gain);
       _loadCell.set_scale(-7050.0);  // -7050.0 This value is obtained using the SparkFun_HX711_Calibration sketch
@@ -43,22 +43,22 @@ class Pedal
       _signal = 1;
     }
 
-    void Pedal::ConfigADS (ADS1115 _ads1015, int channel)
+    void ConfigADS (ADS1115 _ads1015, int channel)
     {
       this->_ads1015 = _ads1015;
       this->_channel = channel;
       _signal = 2;
     }
 
-    int Pedal::getAfterHID() {
+    int getAfterHID() {
       return _afterHID;
     }
 
-    String Pedal::getPedalString() {
+    String getPedalString() {
       return _pedalString;
     }
 
-    void Pedal::readValues() {
+    void readValues() {
       long rawValue = 0;
       if (_signal == 0) {
         rawValue = analogRead(_analogInput);
@@ -77,27 +77,27 @@ class Pedal
         if (rawValue < 0) rawValue = 0;
       }
 
-      Pedal::updatePedal(rawValue);
+      updatePedal(rawValue);
     }
 
-    void Pedal::setSmoothValues(int smoothValues) {
+    void setSmoothValues(int smoothValues) {
       _smooth = smoothValues;
     }
 
-    int Pedal::getSmoothValues() {
+    int getSmoothValues() {
       return _smooth;
     }
 
-    void Pedal::setInvertedValues(int invertedValues) {
+    void setInvertedValues(int invertedValues) {
       _inverted = invertedValues;
     }
 
-    int Pedal::getInvertedValues() {
+    int getInvertedValues() {
       return _inverted;
     }
 
     ////////////////////
-    void Pedal::resetCalibrationValues(int EEPROMSpace) {
+    void resetCalibrationValues(int EEPROMSpace) {
       long resetMap[4] = {0, _raw_bit, 0, _raw_bit};
       _calibration[0] = resetMap[0];
       _calibration[1] = resetMap[1];
@@ -107,12 +107,12 @@ class Pedal
 
     }
 
-    void Pedal::getEEPROMCalibrationValues(int EEPROMSpace) {
+    void getEEPROMCalibrationValues(int EEPROMSpace) {
       String EEPROM_Map = utilLib.readStringFromEEPROM(EEPROMSpace);
-      Pedal::setCalibrationValues(EEPROM_Map, EEPROMSpace);
+      setCalibrationValues(EEPROM_Map, EEPROMSpace);
     }
 
-    void Pedal::setCalibrationValues(String map, int EEPROMSpace) {
+    void setCalibrationValues(String map, int EEPROMSpace) {
       _calibration[0] = long(utilLib.getValue(map, '-', 0).toInt());
       _calibration[1] = long(utilLib.getValue(map, '-', 1).toInt());
       _calibration[2] = long(utilLib.getValue(map, '-', 2).toInt());
@@ -122,17 +122,17 @@ class Pedal
       utilLib.writeStringToEEPROM(EEPROMSpace, map);
     }
 
-    String Pedal::getCalibrationValues(String prefix) {
+    String getCalibrationValues(String prefix) {
       return prefix + utilLib.generateStringMapCali(_calibration);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Pedal::getEEPROMOutputMapValues(int EEPROMSpace) {
+    void getEEPROMOutputMapValues(int EEPROMSpace) {
       String EEPROM_Map = utilLib.readStringFromEEPROM(EEPROMSpace);
-      Pedal::setOutputMapValues(EEPROM_Map, EEPROMSpace);
+      setOutputMapValues(EEPROM_Map, EEPROMSpace);
     }
 
-    void Pedal::setOutputMapValues(String map, int EEPROMSpace) {
+    void setOutputMapValues(String map, int EEPROMSpace) {
       _outputMap[0] = utilLib.getValue(map, '-', 0).toInt();
       _outputMap[1] = utilLib.getValue(map, '-', 1).toInt();
       _outputMap[2] = utilLib.getValue(map, '-', 2).toInt();
@@ -144,11 +144,11 @@ class Pedal
       utilLib.writeStringToEEPROM(EEPROMSpace, map);
     }
 
-    String Pedal::getOutputMapValues(String prefix) {
+    String getOutputMapValues(String prefix) {
       return prefix + utilLib.generateStringMap(_outputMap);
     }
 
-    void Pedal::resetOutputMapValues(int EEPROMSpace) {
+    void resetOutputMapValues(int EEPROMSpace) {
       long resetMap[6] = {0, 20, 40, 60, 80, 100};
       utilLib.writeStringToEEPROM(EEPROMSpace, utilLib.generateStringMap(resetMap));
     }
