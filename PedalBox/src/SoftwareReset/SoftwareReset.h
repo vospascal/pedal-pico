@@ -1,25 +1,30 @@
-//https://github.com/OrhanYigitDurmaz/rp2040-libraries
-#include "pico/stdlib.h"
+//https://github.com/qub1750ul/Arduino_SoftwareReset
+#pragma once
+
+#include <avr/wdt.h>
 
 namespace softwareReset
-{
-  inline void simple()
   {
-    reset_usb_boot(0, 0);
-    reset_cpu();
+    inline void simple()
+      {
+        asm volatile (" jmp 0");
+      }
+
+    inline void standard()
+      {
+        do
+        {
+            wdt_enable(WDTO_15MS);
+            for(;;) {};
+
+        } while(0);
+      }
+
+    // disable software reset after successful reset
+    void disable() __attribute__((naked)) __attribute__((section(".init3"))) ;
+    void disable()
+      {
+        MCUSR = 0 ;
+        wdt_disable() ;
+      }
   }
-
-  inline void standard()
-  {
-    while (true)
-    {
-      // Perform any cleanup tasks if needed
-      
-      // Reset the RP2040 by calling reset_usb_boot()
-      reset_usb_boot(0, 0);
-    }
-  }
-
-  void disable() { }
-}
-

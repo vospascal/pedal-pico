@@ -9,9 +9,6 @@ Pedals pedals;
 void setup() {
   // initialize serial communication at 115200 bits per second:
   Serial.begin(115200);
-  
-  EEPROM.begin(512);  //starts eeprom at 512kb's
-  
   pedals.setThrottleOn(true);
   pedals.setThrottleBits("10bit", "15bit");
   pedals.setThrottleAnalogPin(A0);

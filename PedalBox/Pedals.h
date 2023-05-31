@@ -1,8 +1,9 @@
 #ifndef Pedals_h
 #define Pedals_h
 
-#include <Joystick.h>
+#include "src/Joystick/Joystick.h"
 #include "src/MultiMap/MultiMap.h"
+#include "src/SoftwareReset/SoftwareReset.h"
 #include <EEPROM.h>
 
 #include "UtilLibrary.h"
@@ -25,6 +26,15 @@ String dash = "-";
 
 ADS1115 _ads1015;
 
+Joystick_ _joystick(
+  JOYSTICK_DEFAULT_REPORT_ID,
+  JOYSTICK_TYPE_GAMEPAD,
+  0, 0,                 // Button Count, Hat Switch Count
+  false, false, false,  // X and Y, Z Axis
+  true, true, true,     // Rx, Ry, or Rz
+  false, false,         // rudder or throttle
+  false, false, false   // accelerator, brake, or steering
+); 
 
 // create the pedals
 Pedal _throttle = Pedal("T:");
@@ -35,33 +45,35 @@ class Pedals {
   public:
     //initialise pedal
 
-    void setup() {
-      loadEEPROMSettings(); //load user calibration from device
-      
-      Joystick.begin();   //start joystick library
-      //Joystick.useManualSend()  //define manual sending
-      
+    void Pedals::setup() {
+      Pedals::loadEEPROMSettings();
+      _joystick.begin();
+
       _ads1015.begin();
       _ads1015.setGain(0);      // 6.144 volt
       _ads1015.setDataRate(7);  // fast
       _ads1015.setMode(0);      // continuous mode
 
-      Joystick.X(0); //Set X axis zero on startup
-      
-      Joystick.Y(0); //Set Y axis zero on startup
-      
-      Joystick.Z(0); //Set Z axis zero on startup
-      
+      _joystick.setRxAxis(0);
+      _joystick.setRxAxisRange(0, (_throttle_hid_bit - 1));
+      _throttle.setBits((_throttle_raw_bit - 1), (_throttle_hid_bit - 1));
+
+      _joystick.setRyAxis(0);
+      _joystick.setRyAxisRange(0, (_brake_hid_bit - 1));
+      _brake.setBits((_brake_raw_bit - 1), (_brake_hid_bit - 1));
+
+      _joystick.setRzAxis(0);
+      _joystick.setRzAxisRange(0, (_clutch_hid_bit - 1));
+      _clutch.setBits((_clutch_raw_bit - 1), (_clutch_hid_bit - 1));
     }
 
-    void loop() {
+    void Pedals::loop() {
       if (Serial.available() > 0) {
         String msg = Serial.readStringUntil('\n');
 
         if (msg.indexOf("clearEEPROM") >= 0) {
           for (int i = 0; i < EEPROM.length(); i++) {
             EEPROM.write(i, 0);
-            EEPROM.commit();         
           }
           Serial.println("done");
         }
@@ -120,23 +132,23 @@ class Pedals {
 
       if(_throttle_on){
         _throttle.readValues();
-        Joystick.X(_throttle.getAfterHID());
+        _joystick.setRxAxis(_throttle.getAfterHID());
           SerialString += _throttle.getPedalString();
       }
       
       if(_brake_on){
          _brake.readValues();
-         Joystick.Y(_brake.getAfterHID());
+         _joystick.setRyAxis(_brake.getAfterHID());
          SerialString += _brake.getPedalString();
       }
 
       if(_clutch_on){
         _clutch.readValues();
-        Joystick.Z(_clutch.getAfterHID());
+        _joystick.setRzAxis(_clutch.getAfterHID());
         SerialString += _clutch.getPedalString();
       }
 
-      Joystick.send_now(); // Update the Joystick status on the PC
+      _joystick.sendState(); // Update the Joystick status on the PC
 
       if (Serial.availableForWrite()) {
         Serial.println(SerialString);
@@ -144,92 +156,92 @@ class Pedals {
     }
 
     ///////////////////////// throttle /////////////////////////
-    void setThrottleOn(bool on) {
+    void Pedals::setThrottleOn(bool on) {
       _throttle_on = on;
     }
 
-    void setThrottleBits(String rawBit, String hidBit) {
+    void Pedals::setThrottleBits(String rawBit, String hidBit) {
       _throttle_raw_bit = Pedals::getBit(rawBit);
       _throttle_hid_bit = Pedals::getBit(hidBit);
     }
 
-    void setThrottleLoadcell(int DOUT, int CLK) {
+    void Pedals::setThrottleLoadcell(int DOUT, int CLK) {
       _throttle_pedalType = "Loadcell";
       _throttle.ConfigLoadCell(DOUT, CLK);
     }
 
-    void setThrottleADSChannel(int channel) {
+    void Pedals::setThrottleADSChannel(int channel) {
       _throttle_pedalType = "ADS";
       _throttle.ConfigADS(_ads1015, channel);
     }
 
-    void setThrottleAnalogPin(int analogInput) {
+    void Pedals::setThrottleAnalogPin(int analogInput) {
       _throttle_pedalType = "Analog";
       _throttle_analog_input = analogInput;
       _throttle.ConfigAnalog(analogInput);
     }
 
-    String getThrottleType() {
+    String Pedals::getThrottleType() {
       return _throttle_pedalType;
     }
 
     ///////////////////////// brake /////////////////////////
-    void setBrakeOn(bool on) {
+    void Pedals::setBrakeOn(bool on) {
       _brake_on = on;
     }
 
-    void setBrakeBits(String rawBit, String hidBit) {
+    void Pedals::setBrakeBits(String rawBit, String hidBit) {
       _brake_raw_bit = Pedals::getBit(rawBit);
       _brake_hid_bit = Pedals::getBit(hidBit);
     }
 
-    void setBrakeLoadcell(int DOUT, int CLK) {
+    void Pedals::setBrakeLoadcell(int DOUT, int CLK) {
       _brake_pedalType = "Loadcell";
       _brake.ConfigLoadCell(DOUT, CLK);
     }
 
-    void setBrakeADSChannel(int channel) {
+    void Pedals::setBrakeADSChannel(int channel) {
       _brake_pedalType = "ADS";
       _brake.ConfigADS(_ads1015, channel);
     }
 
-    void setBrakeAnalogPin(int analogInput) {
+    void Pedals::setBrakeAnalogPin(int analogInput) {
       _brake_pedalType = "Analog";
       _brake_analog_input = analogInput;
       _brake.ConfigAnalog(analogInput);
     }
 
-    String getBrakeType() {
+    String Pedals::getBrakeType() {
       return _brake_pedalType;
     }
 
     ///////////////////////// clutch /////////////////////////
-    void setClutchOn(bool on) {
+    void Pedals::setClutchOn(bool on) {
       _clutch_on = on;
     }
 
-    void setClutchBits(String rawBit, String hidBit) {
+    void Pedals::setClutchBits(String rawBit, String hidBit) {
       _clutch_raw_bit = Pedals::getBit(rawBit);
       _clutch_hid_bit = Pedals::getBit(hidBit);
     }
 
-    void setClutchLoadcell(int DOUT, int CLK) {
+    void Pedals::setClutchLoadcell(int DOUT, int CLK) {
       _clutch_pedalType = "Loadcell";
       _clutch.ConfigLoadCell(DOUT, CLK);
     }
 
-    void setClutchADSChannel(int channel) {
+    void Pedals::setClutchADSChannel(int channel) {
       _clutch_pedalType = "ADS";
       _clutch.ConfigADS(_ads1015, channel);
     }
 
-    void setClutchAnalogPin(int analogInput) {
+    void Pedals::setClutchAnalogPin(int analogInput) {
       _clutch_pedalType = "Analog";
       _clutch_analog_input = analogInput;
       _clutch.ConfigAnalog(analogInput);
     }
 
-    String getClutchType() {
+    String Pedals::getClutchType() {
       return _clutch_pedalType;
     }
 
@@ -255,7 +267,7 @@ class Pedals {
     String _clutch_pedalType = "Analog"; //default Analog list: Analog, Loadcell, ADS
     byte _clutch_analog_input = A0; //default analog input
 
-    long getBit(String bits) {
+    long Pedals::getBit(String bits) {
       if (bits == "8bit") {
         return 255;
       }
@@ -312,7 +324,7 @@ class Pedals {
 
     /////////////////////////////////////////////
 
-    void loadEEPROMSettings() {
+    void Pedals::loadEEPROMSettings() {
       if (EEPROM.read(E_INIT) == 'T') {
         loadDeviceSettings();
       } else {
@@ -320,7 +332,7 @@ class Pedals {
       }
     }
 
-    void loadDeviceSettings() {
+    void Pedals::loadDeviceSettings() {
       _clutch.getEEPROMOutputMapValues(E_CLUTCH);
       _brake.getEEPROMOutputMapValues(E_BRAKE);
       _throttle.getEEPROMOutputMapValues(E_THROTTLE);
@@ -341,10 +353,9 @@ class Pedals {
 
     }
 
-    void resetDeviceSettings() {
+    void Pedals::resetDeviceSettings() {
       // write
       EEPROM.write(E_INIT, 'T');
-      EEPROM.commit();
 
       _clutch.resetOutputMapValues(E_CLUTCH);
       _brake.resetOutputMapValues(E_THROTTLE);
@@ -360,23 +371,23 @@ class Pedals {
       _brake.resetCalibrationValues(E_CALIBRATION_B);
       _throttle.resetCalibrationValues(E_CALIBRATION_T);
 
-      rp2040.reboot(); //reboot the pico
+      softwareReset::standard();
     }
 
-    void resetDevice(String msg) {
+    void Pedals::resetDevice(String msg) {
       if (msg.indexOf("ResetDevice") >= 0) {
         resetDeviceSettings();
       }
     }
 
-    void getUsage(String msg) {
+    void Pedals::getUsage(String msg) {
       if (msg.indexOf("GetUsage") >= 0) {
         String USAGE = "USAGE:";
         Serial.println(USAGE + _throttle_on + dash + _brake_on + dash + _clutch_on);
       }
     }
 
-    void getMap(String msg) {
+    void Pedals::getMap(String msg) {
       if (msg.indexOf("GetMap") >= 0) {
         Serial.println(
             _throttle.getOutputMapValues("TMAP:") + cm +
@@ -386,7 +397,7 @@ class Pedals {
       }
     }
 
-    void getSmooth(String msg) {
+    void Pedals::getSmooth(String msg) {
       if (msg.indexOf("GetSmooth") >= 0) {
         String SMOOTH = "SMOOTH:";
         Serial.println(
@@ -398,7 +409,7 @@ class Pedals {
       }
     }
 
-    void getBits(String msg) {
+    void Pedals::getBits(String msg) {
       if (msg.indexOf("GetBits") >= 0) {
         String BITS = "BITS:";
         Serial.println(
@@ -411,7 +422,7 @@ class Pedals {
     }
 
 
-    void getInverted(String msg) {
+    void Pedals::getInverted(String msg) {
       if (msg.indexOf("GetInverted") >= 0) {
         String INVER = "INVER:";
         Serial.println(
@@ -423,7 +434,7 @@ class Pedals {
       }
     }
 
-    void getCalibration(String msg) {
+    void Pedals::getCalibration(String msg) {
       if (msg.indexOf("GetCali") >= 0) {
         String cm = ",";
         Serial.println(
@@ -434,7 +445,7 @@ class Pedals {
       }
     }
 
-    void updateSmooth(String msg) {
+    void Pedals::updateSmooth(String msg) {
       if (msg.indexOf("SMOOTH:") >= 0) {
         String splitSMOOTH = utilLib.getValue(msg, ',', 0);
         splitSMOOTH.replace("SMOOTH:", "");
@@ -446,7 +457,7 @@ class Pedals {
       }
     }
 
-    void updateInverted(String msg) {
+    void Pedals::updateInverted(String msg) {
       if (msg.indexOf("INVER:") >= 0) {
         String splitINVER = utilLib.getValue(msg, ',', 0);
         splitINVER.replace("INVER:", "");
