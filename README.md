@@ -45,7 +45,10 @@ From folder packages -> rp2040 -> hardware -> rp2040 -> [yourpackageversion] -> 
 
 Add this line under the Generic one:
 
-[`MakeBoard("pedalboxpico", "Vospascal", "PedalBox", "0x2e8a", "0x1069", 250, "PEDALBOX_PICO", 2, "boot2_w25q080_2_padded_checksum")`]
+```
+# PedalBox
+MakeBoard("pedalboxpico", "Vospascal", "PedalBox", "0x2e8a", "0x1069", 250, "PEDALBOX_PICO", 2, "boot2_w25q080_2_padded_checksum")
+```
 
 Go to the arduino-pico github page again, download the package folder and copy it to your installation directory.
 
