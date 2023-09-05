@@ -377,14 +377,6 @@ class Pedals {
       //softwareReset::standard();
       rp2040.reboot();
 
-      //software_reset();
-      //TODO: Add software reset
-    }
-    void software_reset() { //doesnt work
-        watchdog_enable(1, 1);
-        while(1);
-      }
-
     void resetDevice(String msg) {
       if (msg.indexOf("ResetDevice") >= 0) {
         resetDeviceSettings();
