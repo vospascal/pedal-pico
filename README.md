@@ -50,7 +50,7 @@ Add this line under the Generic one:
 MakeBoard("pedalboxpico", "Vospascal", "PedalBox", "0x2e8a", "0x1069", 250, "PEDALBOX_PICO", 2, "boot2_w25q080_2_padded_checksum")
 ```
 
-![Alt text](makeboards.jpeg?raw=true "Makeboards.py")
+![Alt text](makeboards.jpeg?raw=true "makeboards.py")
 
 Go to the arduino-pico github page again, download the package folder and copy it to your installation directory.
 
