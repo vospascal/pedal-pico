@@ -2,7 +2,7 @@
 
 For now HID Resolution should be fixed at 10 bits. if you change it, it wont work. This is because of the limitations of the joystick library. In the future, I might fix it. 
 
-Also be aware that this firmware uses the last sector of flash to emulate anEEPROM as he pico doesnt have one. But i highly advise to use an exterhal one if you are going to use this in the long term.
+Also be aware that this firmware uses the last sector of flash to emulate an EEPROM as the Pi Pico doesnt have one. But i highly advise to use an external one if you are going to use this in the long term.
 
 Please be patient, and use the releases tab for the .uf2 file *AND* source code.
 
@@ -45,19 +45,19 @@ From folder packages -> rp2040 -> hardware -> rp2040 -> [yourpackageversion] -> 
 
 Add this line under the Generic one:
 
-[**MakeBoard("pedalboxpico", "Vospascal", "PedalBox", "0x2e8a", "0x1069", 250, "PEDALBOX_PICO", 2, "boot2_w25q080_2_padded_checksum")**]
+[`MakeBoard("pedalboxpico", "Vospascal", "PedalBox", "0x2e8a", "0x1069", 250, "PEDALBOX_PICO", 2, "boot2_w25q080_2_padded_checksum")`]
 
 Go to the arduino-pico github page again, download the package folder and copy it to your installation directory.
 
 Now run the makeboards.py .
 
-Also go to the variants folder, and copy the **pedalboxpico** folder to there.
+Also go to the variants folder, and copy the `pedalboxpico` folder to there.
 
 Restart Arduino IDE and youre good to go!
 
 Now you should see "Vospascal PedalBox" as a board in the Arduino IDE.
 
-# pedal-pico
+# Pedal-Pico
 It reads 0 - 3.3 volt scale. So as long as its within that range it'll work.
 
 Measure the current, use "Raspberry Pi Pico" as to read the analogue value from the sensor
