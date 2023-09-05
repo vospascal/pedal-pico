@@ -42,6 +42,7 @@ void UtilLib::writeStringToEEPROM(int addrOffset, const String &strToWrite)
   {
     EEPROM.write(addrOffset + 1 + i, strToWrite[i]);
   }
+  EEPROM.commit();
 }
 
 String UtilLib::generateStringMap(long *list) {

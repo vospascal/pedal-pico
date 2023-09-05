@@ -12,6 +12,8 @@
 
 #include "Pedal.h"
 
+#include "hardware/watchdog.h"
+
 #define E_INIT 1023
 #define E_CLUTCH 0
 #define E_THROTTLE 30
@@ -39,12 +41,12 @@ class Pedals {
 
     void setup() {
       EEPROM.begin(1024);
-      //loadEEPROMSettings();
+      loadEEPROMSettings();
       Joystick.begin();
       Joystick.useManualSend(true); 
 
       _ads1015.begin();
-      _ads1015.setGain(0);      // 6.144 volt
+      _ads1015.setGain(1);      // 4.096 volts
       _ads1015.setDataRate(7);  // fast
       _ads1015.setMode(0);      // continuous mode
 
@@ -70,6 +72,7 @@ class Pedals {
           for (int i = 0; i < EEPROM.length(); i++) {
             EEPROM.write(i, 0);
           }
+          EEPROM.commit();
           Serial.println("done");
         }
 
@@ -127,27 +130,26 @@ class Pedals {
 
       if(_throttle_on){
         _throttle.readValues();
-        Joystick.sliderLeft(_throttle.getAfterHID() / 4);
+        Joystick.sliderLeft(_throttle.getAfterHID());
           SerialString += _throttle.getPedalString();
       }
       
       if(_brake_on){
          _brake.readValues();
-         Joystick.sliderRight(_brake.getAfterHID() / 4);
+         Joystick.sliderRight(_brake.getAfterHID());
          SerialString += _brake.getPedalString();
       }
 
       if(_clutch_on){
         _clutch.readValues();
-        Joystick.Zrotate(_clutch.getAfterHID() / 4);
+        Joystick.Zrotate(_clutch.getAfterHID());
         SerialString += _clutch.getPedalString();
       }
       Joystick.send_now(); // Update the Joystick status on the PC
 
       if (Serial.availableForWrite()) {
         Serial.println(SerialString);
-        Serial.flush();
-        delay(10);
+        delay(5);
       }
     }
 
@@ -321,11 +323,12 @@ class Pedals {
     /////////////////////////////////////////////
 
     void loadEEPROMSettings() {
-      digitalWrite(LED_BUILTIN, HIGH);
+      digitalWrite(LED_BUILTIN, LOW);
       if (EEPROM.read(E_INIT) == 'T') {
         loadDeviceSettings();
       } else {
-        resetDeviceSettings();
+        resetDeviceSettings();  
+        digitalWrite(LED_BUILTIN, HIGH);
       }
     }
 
@@ -353,6 +356,7 @@ class Pedals {
     void resetDeviceSettings() {
       // write
       EEPROM.write(E_INIT, 'T');
+      EEPROM.commit();
 
       _clutch.resetOutputMapValues(E_CLUTCH);
       _brake.resetOutputMapValues(E_THROTTLE);
@@ -372,7 +376,14 @@ class Pedals {
 
       //softwareReset::standard();
       rp2040.reboot();
+
+      //software_reset();
+      //TODO: Add software reset
     }
+    void software_reset() { //doesnt work
+        watchdog_enable(1, 1);
+        while(1);
+      }
 
     void resetDevice(String msg) {
       if (msg.indexOf("ResetDevice") >= 0) {

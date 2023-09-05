@@ -233,14 +233,13 @@ class Pedal
       utilLib.copyArray(_outputMap, outputMapHID, 6);
       utilLib.arrayMapMultiplier(outputMapHID, (_hid_bit / 100));
 
-      beforeHID = utilLib.scaleMap(pedalOutput, lowDeadzone, topDeadzone, 0, _hid_bit);
-      //beforeHID = analogRead(A0) * 16;
+      //beforeHID = utilLib.scaleMap(pedalOutput, lowDeadzone, topDeadzone, 0, _hid_bit);
+      beforeHID = utilLib.scaleMap(pedalOutput, 0, topDeadzone, 0, _hid_bit);
       afterHID = utilLib.scaleMultiMap(beforeHID, inputMapHID, outputMapHID, 6);
 
       beforeSerial = utilLib.scaleMap(pedalOutput, lowDeadzone, topDeadzone, 0, _serial_range);
+      //beforeSerial = utilLib.scaleMap(pedalOutput, 0, 4095, 0, _serial_range);
       afterSerial = utilLib.scaleMultiMap(beforeSerial, _inputMap, _outputMap, 6);
-      //afterSerial = 100;
-      //beforeSerial = 100;
       ////////////////////////////////////////////////////////////////////////////////
 
       String p1 = ";";
