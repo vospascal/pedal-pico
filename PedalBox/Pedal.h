@@ -16,7 +16,6 @@ Biquad _brakeFilter = Biquad(BiquadType::lowpass, 0.2, 0.5, 0.0);
 Biquad _clutchFilter = Biquad(BiquadType::lowpass, 0.2, 0.5, 0.0);
 Biquad _throttleFilter = Biquad(BiquadType::lowpass, 0.2, 0.5, 0.0);
 
-
 class Pedal
 {
   public:
@@ -25,7 +24,7 @@ class Pedal
       _prefix = prefix;
     }
 
-    void setBits (long rawBit, long hidBit) {
+    void setBits(long rawBit, long hidBit) {
       _raw_bit = rawBit;
       _hid_bit = hidBit;
     }
@@ -109,7 +108,7 @@ class Pedal
 
     void getEEPROMCalibrationValues(int EEPROMSpace) {
       String EEPROM_Map = utilLib.readStringFromEEPROM(EEPROMSpace);
-      Pedal::setCalibrationValues(EEPROM_Map, EEPROMSpace);
+      setCalibrationValues(EEPROM_Map, EEPROMSpace);
     }
 
     void setCalibrationValues(String map, int EEPROMSpace) {
@@ -129,7 +128,7 @@ class Pedal
 
     void getEEPROMOutputMapValues(int EEPROMSpace) {
       String EEPROM_Map = utilLib.readStringFromEEPROM(EEPROMSpace);
-      Pedal::setOutputMapValues(EEPROM_Map, EEPROMSpace);
+      setOutputMapValues(EEPROM_Map, EEPROMSpace);
     }
 
     void setOutputMapValues(String map, int EEPROMSpace) {
@@ -193,9 +192,9 @@ class Pedal
 
       if (_smooth == 1) {
         if(_prefix == "B:") {
-//          BrakeFilter.Filter(rawValue);
-//          rawValue = (long)BrakeFilter.Current();
-          rawValue =  _brakeFilter.process(rawValue);
+//        BrakeFilter.Filter(rawValue);
+//        rawValue = (long)BrakeFilter.Current();
+        rawValue =  _brakeFilter.process(rawValue);
         }
         if(_prefix == "T:") {
 //          ThrottleFilter.Filter(rawValue);
@@ -235,11 +234,13 @@ class Pedal
       utilLib.arrayMapMultiplier(outputMapHID, (_hid_bit / 100));
 
       beforeHID = utilLib.scaleMap(pedalOutput, lowDeadzone, topDeadzone, 0, _hid_bit);
+      //beforeHID = analogRead(A0) * 16;
       afterHID = utilLib.scaleMultiMap(beforeHID, inputMapHID, outputMapHID, 6);
 
       beforeSerial = utilLib.scaleMap(pedalOutput, lowDeadzone, topDeadzone, 0, _serial_range);
       afterSerial = utilLib.scaleMultiMap(beforeSerial, _inputMap, _outputMap, 6);
-
+      //afterSerial = 100;
+      //beforeSerial = 100;
       ////////////////////////////////////////////////////////////////////////////////
 
       String p1 = ";";

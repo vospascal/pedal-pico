@@ -3,8 +3,10 @@
 
 #include <Joystick.h>
 #include "src/MultiMap/MultiMap.h"
-// #include "src/SoftwareReset/SoftwareReset.h"   rp2040.reset(); is used instead of this.
+// #include "src/SoftwareReset/SoftwareReset.h"
 #include <EEPROM.h>
+
+#include "src/ADS1X15/ADS1X15.h"
 
 #include "UtilLibrary.h"
 
@@ -26,8 +28,6 @@ String dash = "-";
 
 ADS1115 _ads1015;
 
-Joystick_ _joystick(); 
-
 // create the pedals
 Pedal _throttle = Pedal("T:");
 Pedal _brake = Pedal("B:");
@@ -38,23 +38,28 @@ class Pedals {
     //initialise pedal
 
     void setup() {
-      Pedals::loadEEPROMSettings();
+      EEPROM.begin(1024);
+      //loadEEPROMSettings();
       Joystick.begin();
-      Joystick.useManualSend(true);
+      Joystick.useManualSend(true); 
 
       _ads1015.begin();
       _ads1015.setGain(0);      // 6.144 volt
       _ads1015.setDataRate(7);  // fast
       _ads1015.setMode(0);      // continuous mode
 
-      Joystick.sliderLeft(0);  //set rx to zero
-      
-      Joystick.sliderRight(0);  //set ry to zero
-      
-      Joystick.Zrotate(0);  // set rz to zero
+      Joystick.sliderLeft(0); //rX in this library
+      //Joystick.setRxAxisRange(0, (_throttle_hid_bit - 1));
+      _throttle.setBits((_throttle_raw_bit - 1), (_throttle_hid_bit - 1));
 
-      Joystick.send_now();
-      
+      Joystick.sliderRight(0); //rY in this library
+      //Joystick.setRyAxisRange(0, (_brake_hid_bit - 1));
+      _brake.setBits((_brake_raw_bit - 1), (_brake_hid_bit - 1));
+
+      Joystick.Zrotate(0); //rZ in this library
+      //Joystick.setRzAxisRange(0, (_clutch_hid_bit - 1));
+      _clutch.setBits((_clutch_raw_bit - 1), (_clutch_hid_bit - 1));
+      Serial.println("okay");
     }
 
     void loop() {
@@ -65,7 +70,6 @@ class Pedals {
           for (int i = 0; i < EEPROM.length(); i++) {
             EEPROM.write(i, 0);
           }
-          EEPROM.commit();
           Serial.println("done");
         }
 
@@ -123,26 +127,27 @@ class Pedals {
 
       if(_throttle_on){
         _throttle.readValues();
-        Joystick.sliderLeft(_throttle.getAfterHID());
+        Joystick.sliderLeft(_throttle.getAfterHID() / 4);
           SerialString += _throttle.getPedalString();
       }
       
       if(_brake_on){
          _brake.readValues();
-         Joystick.sliderRight(_brake.getAfterHID());
+         Joystick.sliderRight(_brake.getAfterHID() / 4);
          SerialString += _brake.getPedalString();
       }
 
       if(_clutch_on){
         _clutch.readValues();
-        Joystick.Zrotate(_clutch.getAfterHID());
+        Joystick.Zrotate(_clutch.getAfterHID() / 4);
         SerialString += _clutch.getPedalString();
       }
-
       Joystick.send_now(); // Update the Joystick status on the PC
 
       if (Serial.availableForWrite()) {
         Serial.println(SerialString);
+        Serial.flush();
+        delay(10);
       }
     }
 
@@ -212,8 +217,8 @@ class Pedals {
     }
 
     void setClutchBits(String rawBit, String hidBit) {
-      _clutch_raw_bit = Pedals::getBit(rawBit);
-      _clutch_hid_bit = Pedals::getBit(hidBit);
+      _clutch_raw_bit = getBit(rawBit);
+      _clutch_hid_bit = getBit(hidBit);
     }
 
     void setClutchLoadcell(int DOUT, int CLK) {
@@ -316,6 +321,7 @@ class Pedals {
     /////////////////////////////////////////////
 
     void loadEEPROMSettings() {
+      digitalWrite(LED_BUILTIN, HIGH);
       if (EEPROM.read(E_INIT) == 'T') {
         loadDeviceSettings();
       } else {
@@ -347,7 +353,6 @@ class Pedals {
     void resetDeviceSettings() {
       // write
       EEPROM.write(E_INIT, 'T');
-      EEPROM.commit();
 
       _clutch.resetOutputMapValues(E_CLUTCH);
       _brake.resetOutputMapValues(E_THROTTLE);
@@ -362,7 +367,10 @@ class Pedals {
       _clutch.resetCalibrationValues(E_CALIBRATION_C);
       _brake.resetCalibrationValues(E_CALIBRATION_B);
       _throttle.resetCalibrationValues(E_CALIBRATION_T);
+      
+      EEPROM.commit(); //rp2040-reserve command
 
+      //softwareReset::standard();
       rp2040.reboot();
     }
 
@@ -376,6 +384,7 @@ class Pedals {
       if (msg.indexOf("GetUsage") >= 0) {
         String USAGE = "USAGE:";
         Serial.println(USAGE + _throttle_on + dash + _brake_on + dash + _clutch_on);
+        Serial.flush();
       }
     }
 
@@ -386,6 +395,7 @@ class Pedals {
             _brake.getOutputMapValues("BMAP:") + cm +
             _clutch.getOutputMapValues("CMAP:")
         );
+        Serial.flush();
       }
     }
 
@@ -398,6 +408,7 @@ class Pedals {
             _brake.getSmoothValues() + dash +
             _clutch.getSmoothValues()
        );
+       Serial.flush();
       }
     }
 
@@ -410,6 +421,7 @@ class Pedals {
             _brake_raw_bit + dash + _brake_hid_bit + dash +
             _clutch_raw_bit+ dash + _clutch_hid_bit
         );
+        Serial.flush();
       }
     }
 
@@ -423,6 +435,7 @@ class Pedals {
             _brake.getInvertedValues() + dash +
             _clutch.getInvertedValues()
         );
+        Serial.flush();
       }
     }
 
@@ -434,6 +447,7 @@ class Pedals {
             _brake.getCalibrationValues("BCALI:") + cm +
             _clutch.getCalibrationValues("CCALI:")
         );
+        Serial.flush();
       }
     }
 
