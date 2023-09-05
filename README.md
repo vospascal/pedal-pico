@@ -1,4 +1,9 @@
 ## Under Development 
+
+For now HID Resolution should be fixed at 10 bits. if you change it, it wont work. This is because of the limitations of the joystick library. In the future, I might fix it. 
+
+Also be aware that this firmware uses the last sector of flash to emulate anEEPROM as he pico doesnt have one. But i highly advise to use an exterhal one if you are going to use this in the long term.
+
 Please be patient, and use the releases tab for the .uf2 file *AND* source code.
 
 ## PedalBox
