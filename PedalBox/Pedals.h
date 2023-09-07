@@ -12,8 +12,6 @@
 
 #include "Pedal.h"
 
-#include "hardware/watchdog.h"
-
 #define E_INIT 1023
 #define E_CLUTCH 0
 #define E_THROTTLE 30
@@ -75,6 +73,7 @@ class Pedals {
           EEPROM.commit();
           Serial.println("done");
         }
+    
 
         Pedals::resetDevice(msg);
         Pedals::getUsage(msg);
@@ -124,6 +123,7 @@ class Pedals {
 
         Pedals::updateInverted(msg);
         Pedals::updateSmooth(msg);
+        
       }
 
       String SerialString = "";
@@ -376,6 +376,7 @@ class Pedals {
 
       //softwareReset::standard();
       rp2040.reboot();
+    }
 
     void resetDevice(String msg) {
       if (msg.indexOf("ResetDevice") >= 0) {
