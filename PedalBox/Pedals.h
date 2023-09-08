@@ -145,6 +145,7 @@ class Pedals {
         Joystick.Zrotate(_clutch.getAfterHID());
         SerialString += _clutch.getPedalString();
       }
+      
       Joystick.send_now(); // Update the Joystick status on the PC
 
       if (Serial.availableForWrite()) {
@@ -323,12 +324,10 @@ class Pedals {
     /////////////////////////////////////////////
 
     void loadEEPROMSettings() {
-      digitalWrite(LED_BUILTIN, LOW);
       if (EEPROM.read(E_INIT) == 'T') {
         loadDeviceSettings();
       } else {
         resetDeviceSettings();  
-        digitalWrite(LED_BUILTIN, HIGH);
       }
     }
 
