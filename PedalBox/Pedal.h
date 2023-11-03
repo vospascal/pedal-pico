@@ -16,6 +16,7 @@ Biquad _brakeFilter = Biquad(BiquadType::lowpass, 0.2, 0.5, 0.0);
 Biquad _clutchFilter = Biquad(BiquadType::lowpass, 0.2, 0.5, 0.0);
 Biquad _throttleFilter = Biquad(BiquadType::lowpass, 0.2, 0.5, 0.0);
 
+
 class Pedal
 {
   public:
@@ -24,7 +25,7 @@ class Pedal
       _prefix = prefix;
     }
 
-    void setBits(long rawBit, long hidBit) {
+    void setBits (long rawBit, long hidBit) {
       _raw_bit = rawBit;
       _hid_bit = hidBit;
     }
@@ -76,7 +77,7 @@ class Pedal
         if (rawValue < 0) rawValue = 0;
       }
 
-      Pedal::updatePedal(rawValue);
+      updatePedal(rawValue);
     }
 
     void setSmoothValues(int smoothValues) {
@@ -192,9 +193,9 @@ class Pedal
 
       if (_smooth == 1) {
         if(_prefix == "B:") {
-//        BrakeFilter.Filter(rawValue);
-//        rawValue = (long)BrakeFilter.Current();
-        rawValue =  _brakeFilter.process(rawValue);
+//          BrakeFilter.Filter(rawValue);
+//          rawValue = (long)BrakeFilter.Current();
+          rawValue =  _brakeFilter.process(rawValue);
         }
         if(_prefix == "T:") {
 //          ThrottleFilter.Filter(rawValue);
@@ -233,13 +234,12 @@ class Pedal
       utilLib.copyArray(_outputMap, outputMapHID, 6);
       utilLib.arrayMapMultiplier(outputMapHID, (_hid_bit / 100));
 
-      //beforeHID = utilLib.scaleMap(pedalOutput, lowDeadzone, topDeadzone, 0, _hid_bit);
-      beforeHID = utilLib.scaleMap(pedalOutput, 0, topDeadzone, 0, _hid_bit);
+      beforeHID = utilLib.scaleMap(pedalOutput, lowDeadzone, topDeadzone, 0, _hid_bit);
       afterHID = utilLib.scaleMultiMap(beforeHID, inputMapHID, outputMapHID, 6);
 
       beforeSerial = utilLib.scaleMap(pedalOutput, lowDeadzone, topDeadzone, 0, _serial_range);
-      //beforeSerial = utilLib.scaleMap(pedalOutput, 0, 4095, 0, _serial_range);
       afterSerial = utilLib.scaleMultiMap(beforeSerial, _inputMap, _outputMap, 6);
+
       ////////////////////////////////////////////////////////////////////////////////
 
       String p1 = ";";
