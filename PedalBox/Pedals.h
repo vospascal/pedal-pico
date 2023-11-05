@@ -5,6 +5,7 @@
 //#include "src/Joystick/Joystick.h"
 
 #include <Adafruit_TinyUSB.h>
+#include <Adafruit_USBD_CDC.h>
 #include "usb_desc.h"
 
 #include "src/MultiMap/MultiMap.h"
